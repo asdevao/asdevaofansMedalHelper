@@ -118,7 +118,7 @@ class BiliUser:
                         await asyncio.sleep(self.config['LIKE_CD'])
                     self.log.log(
                         "SUCCESS",
-                        f"{medal['anchor_info']['nick_name']} 点赞{i+1}次成功 {index+1}/{len(self.medals)}",
+                        f"{medal['nick_name']} 点赞{i+1}次成功 {index+1}/{len(self.medals)}",
                     )
             else:
                 self.log.log("INFO", "异步点赞任务开始....")
@@ -131,7 +131,7 @@ class BiliUser:
                     await asyncio.gather(*allTasks)
                     self.log.log(
                         "SUCCESS",
-                        f"{medal['anchor_info']['nick_name']} 异步点赞{i+1}次成功",
+                        f"异步点赞{i+1}次成功",
                     )
                     await asyncio.sleep(self.config['LIKE_CD'])
             await asyncio.sleep(10)
@@ -161,8 +161,8 @@ class BiliUser:
                 successnum+=1
                 self.log.log(
                     "DEBUG",
-                    "{} 房间弹幕打卡成功: {} ({}/{})".format(
-                        medal['anchor_info']['nick_name'], danmaku, n, len(self.medals)
+                    "{} 打卡成功: {} ({}/{})".format(
+                         danmaku, n, len(self.medals)
                     ),
                 )
             except Exception as e:
@@ -189,11 +189,11 @@ class BiliUser:
         if self.isLogin:
             tasks = []
             if self.medalsNeedDo:
-                self.log.log("INFO", f"共有 {len(self.medalsNeedDo)} 个牌子未满 1500 亲密度")
+                self.log.log("INFO", f"")
                 tasks.append(self.like_v3())
                 tasks.append(self.watchinglive())
             else:
-                self.log.log("INFO", "所有牌子已满 1500 亲密度")
+                self.log.log("INFO", "")
             tasks.append(self.sendDanmaku())
             tasks.append(self.signInGroups())
             await asyncio.gather(*tasks)
@@ -231,7 +231,7 @@ class BiliUser:
             if initialMedalInfo['has_fans_medal']:
                 initialMedal = initialMedalInfo['my_fans_medal']
                 self.message.append(
-                    f"【当前佩戴】「{initialMedal['medal_name']}」({initialMedal['target_name']}) {initialMedal['level']} 级 "
+                    f"【当前佩戴】 {initialMedal['level']} 级 "
                 )
                 if initialMedal['level'] < 20 and initialMedal['today_feed'] != 0:
                     need = initialMedal['next_intimacy'] - initialMedal['intimacy']
@@ -260,14 +260,13 @@ class BiliUser:
                 if heartNum%5==0:
                     self.log.log(
                         "INFO",
-                        f"{medal['anchor_info']['nick_name']} 第{heartNum}次心跳包已发送（{n}/{len(self.medalsNeedDo)}）",
                     )
                 await asyncio.sleep(60)
         self.log.log("SUCCESS", f"每日{HEART_MAX}分钟任务完成")
 
     async def signInGroups(self):
         if not self.config['SIGNINGROUP']:
-            self.log.log("INFO", "应援团签到任务关闭")
+            self.log.log("INFO", "任务关闭")
             return
         self.log.log("INFO", "应援团签到任务开始")
         try:
