@@ -1,14 +1,18 @@
+# 使用官方的 Python 镜像（此处使用 3.9-alpine）
 FROM python:3.9-alpine
+
+# 设置时区为上海
 ENV TZ="Asia/Shanghai"
 
-WORKDIR /tmp
+# 设置工作目录为应用目录
+WORKDIR /app
 
-RUN apk add --no-cache git \
-    && git config --global --add safe.directory "*" \
-    && git clone https://github.com/XiaoMiku01/fansMedalHelper /app/fansMedalHelper \
-    && pip install --no-cache-dir -r /app/fansMedalHelper/requirements.txt \
-    && rm -rf /tmp/*
+# 将当前目录下的所有文件复制到容器的 /app 目录
+COPY . /app
 
-WORKDIR /app/fansMedalHelper
+# 使用阿里云镜像源加速 pip 安装速度
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ \
+    && pip install --no-cache-dir -r /app/requirements.txt
 
-ENTRYPOINT ["/bin/sh","/app/fansMedalHelper/entrypoint.sh"]
+# 设置容器启动时执行的命令
+ENTRYPOINT ["python", "main.py"]
