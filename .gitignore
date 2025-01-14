@@ -6,7 +6,6 @@ go.mod
 go.sum
 *.exe
 login_info.txt
-users.yaml
 *.tmp
 .venv
 venv/
